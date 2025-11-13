@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolt IA - Processamento em Lote</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-blue-600">⚡ Bolt IA - Lote</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="userEmail" class="text-gray-700"></span>
+                    <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                        Sair
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Seletor de Modo -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">1️⃣ Selecione o Modo de Processamento</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <label class="cursor-pointer">
+                    <input type="radio" name="mode" value="expand_languages" class="hidden peer" checked>
+                    <div class="border-2 border-gray-300 rounded-lg p-4 peer-checked:border-blue-500 peer-checked:bg-blue-50 hover:border-blue-300 transition">
+                        <div class="text-center">
+                            <i class="fas fa-globe text-3xl text-blue-500 mb-2"></i>
+                            <h3 class="font-bold">Expandir Idiomas</h3>
+                            <p class="text-sm text-gray-600">1 título × N idiomas</p>
+                        </div>
+                    </div>
+                </label>
+                
+                <label class="cursor-pointer">
+                    <input type="radio" name="mode" value="expand_titles" class="hidden peer">
+                    <div class="border-2 border-gray-300 rounded-lg p-4 peer-checked:border-green-500 peer-checked:bg-green-50 hover:border-green-300 transition">
+                        <div class="text-center">
+                            <i class="fas fa-list text-3xl text-green-500 mb-2"></i>
+                            <h3 class="font-bold">Expandir Títulos</h3>
+                            <p class="text-sm text-gray-600">N títulos × 1 idioma</p>
+                        </div>
+                    </div>
+                </label>
+                
+                <label class="cursor-pointer">
+                    <input type="radio" name="mode" value="matrix" class="hidden peer">
+                    <div class="border-2 border-gray-300 rounded-lg p-4 peer-checked:border-purple-500 peer-checked:bg-purple-50 hover:border-purple-300 transition">
+                        <div class="text-center">
+                            <i class="fas fa-th text-3xl text-purple-500 mb-2"></i>
+                            <h3 class="font-bold">Matriz Completa</h3>
+                            <p class="text-sm text-gray-600">N títulos × M idiomas</p>
+                        </div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Configuração -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">2️⃣ Configure seu Lote</h2>
+            
+            <!-- Agente -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Agente</label>
+                <select id="agentSelect" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500">
+                    <option value="">Carregando agentes...</option>
+                </select>
+            </div>
+
+            <!-- Títulos (modo expand_languages e matrix) -->
+            <div id="titleInput" class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Título
+                    <span class="text-gray-500 text-xs">(mínimo 3 caracteres)</span>
+                </label>
+                <input type="text" id="singleTitle" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500" placeholder="Ex: O Segredo da Riqueza Exponencial">
+            </div>
+
+            <!-- Títulos múltiplos (modo expand_titles e matrix) -->
+            <div id="titlesInput" class="mb-4 hidden">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Títulos
+                    <span class="text-gray-500 text-xs">(um por linha, máximo 1000)</span>
+                </label>
+                <textarea id="multipleTitles" rows="6" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500" placeholder="Título 1&#10;Título 2&#10;Título 3&#10;..."></textarea>
+                <div class="text-sm text-gray-600 mt-1">
+                    <span id="titleCount">0</span> títulos inseridos
+                </div>
+            </div>
+
+            <!-- Seletor de Idiomas -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Idiomas
+                    <span class="text-gray-500 text-xs">(35 idiomas disponíveis)</span>
+                </label>
+                <div class="border border-gray-300 rounded-lg p-3">
+                    <input type="text" id="languageSearch" class="w-full border border-gray-300 rounded px-3 py-2 mb-3" placeholder="🔍 Buscar idioma...">
+                    <div id="languageList" class="max-h-60 overflow-y-auto space-y-2">
+                        <!-- Será preenchido via JS -->
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <button onclick="selectAllLanguages()" class="text-sm text-blue-600 hover:underline mr-3">Selecionar Todos</button>
+                    <button onclick="clearAllLanguages()" class="text-sm text-red-600 hover:underline">Limpar Tudo</button>
+                    <span class="text-sm text-gray-600 ml-3">
+                        <span id="languageCount">0</span> selecionados
+                    </span>
+                </div>
+            </div>
+
+            <!-- Idiomas Selecionados com Vozes -->
+            <div id="selectedLanguagesVoices" class="mb-4 hidden">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Vozes Selecionadas</label>
+                <div id="voiceSelectionContainer" class="space-y-3">
+                    <!-- Será preenchido dinamicamente -->
+                </div>
+            </div>
+
+            <!-- Estimativa -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 class="font-bold text-blue-900 mb-2">📊 Estimativa</h3>
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                        <div class="text-2xl font-bold text-blue-600" id="estimatedJobs">0</div>
+                        <div class="text-sm text-gray-600">Jobs</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-green-600" id="estimatedTime">0</div>
+                        <div class="text-sm text-gray-600">Minutos</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-purple-600" id="estimatedCost">$0.00</div>
+                        <div class="text-sm text-gray-600">Custo</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão de Criar Lote -->
+        <div class="text-center mb-6">
+            <button onclick="createBatch()" class="bg-blue-600 text-white px-8 py-3 rounded-lg text-lg font-bold hover:bg-blue-700 transition">
+                🚀 Criar Lote
+            </button>
+        </div>
+
+        <!-- Lista de Batches -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-bold mb-4">📋 Seus Lotes</h2>
+            <div id="batchList">
+                <p class="text-gray-500 text-center py-8">Carregando...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/batch.js"></script>
+</body>
+</html>
