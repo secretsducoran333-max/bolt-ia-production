@@ -1,0 +1,1660 @@
+<html lang="pt-br"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BoredFy AI - Automation</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <!-- JSZip for creating zip files in the browser -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Verificação de autenticação -->
+    <script>
+      // Função para esconder loading e mostrar página
+      function showPage() {
+        const spinner = document.getElementById("loading-spinner");
+        if (spinner) {
+          spinner.style.display = "none";
+        }
+        document.body.style.display = "flex";
+      }
+
+      // Função para redirecionar para login
+      function redirectToLogin() {
+        window.location.href = "login.html";
+      }
+
+      // Verifica se o usuário está logado
+      document.addEventListener("DOMContentLoaded", function () {
+        // Esconde a página até verificar autenticação
+        document.body.style.display = "none";
+
+        // Verifica se existe flag de login no sessionStorage
+        const isLoggedIn = sessionStorage.getItem('boredfy_logged_in');
+        
+        if (isLoggedIn === 'true') {
+          // Usuário logado, mostrar página
+          console.log("✅ Usuário logado, mostrando página...");
+          showPage();
+        } else {
+          // Usuário não logado, redirecionar para login
+          console.log("❌ Usuário não logado, redirecionando...");
+          redirectToLogin();
+        }
+      });
+    </script>
+  <style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0px}.-right-1{right:-0.25rem}.-top-1{top:-0.25rem}.bottom-4{bottom:1rem}.bottom-full{bottom:100%}.left-1\/2{left:50%}.right-1{right:0.25rem}.right-4{right:1rem}.top-1{top:0.25rem}.right-2{right:0.5rem}.top-1\/2{top:50%}.z-40{z-index:40}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.my-2{margin-top:0.5rem;margin-bottom:0.5rem}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-1{margin-left:0.25rem}.ml-2{margin-left:0.5rem}.ml-3{margin-left:0.75rem}.mr-1{margin-right:0.25rem}.mr-2{margin-right:0.5rem}.mr-4{margin-right:1rem}.mt-1{margin-top:0.25rem}.mt-2{margin-top:0.5rem}.mt-3{margin-top:0.75rem}.mt-4{margin-top:1rem}.mt-8{margin-top:2rem}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-screen{height:100vh}.h-10{height:2.5rem}.h-12{height:3rem}.h-16{height:4rem}.h-2{height:0.5rem}.h-3{height:0.75rem}.h-4{height:1rem}.h-full{height:100%}.max-h-\[90vh\]{max-height:90vh}.max-h-screen{max-height:100vh}.w-1\/3{width:33.333333%}.w-10{width:2.5rem}.w-12{width:3rem}.w-16{width:4rem}.w-3{width:0.75rem}.w-32{width:8rem}.w-4{width:1rem}.w-full{width:100%}.max-w-3xl{max-width:48rem}.max-w-4xl{max-width:56rem}.max-w-md{max-width:28rem}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.-translate-x-1\/2{--tw-translate-x:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-y-1\/2{--tw-translate-y:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes bounce{0%, 100%{transform:translateY(-25%);animation-timing-function:cubic-bezier(0.8,0,1,1)}50%{transform:none;animation-timing-function:cubic-bezier(0,0,0.2,1)}}.animate-bounce{animation:bounce 1s infinite}@keyframes ping{75%, 100%{transform:scale(2);opacity:0}}.animate-ping{animation:ping 1s cubic-bezier(0, 0, 0.2, 1) infinite}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}@keyframes spin{to{transform:rotate(360deg)}}.animate-spin{animation:spin 1s linear infinite}.cursor-help{cursor:help}.cursor-pointer{cursor:pointer}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-2{gap:0.5rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.whitespace-nowrap{white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-gray-600{--tw-border-opacity:1;border-color:rgb(75 85 99 / var(--tw-border-opacity, 1))}.border-gray-700{--tw-border-opacity:1;border-color:rgb(55 65 81 / var(--tw-border-opacity, 1))}.border-indigo-400{--tw-border-opacity:1;border-color:rgb(129 140 248 / var(--tw-border-opacity, 1))}.border-indigo-500\/30{border-color:rgb(99 102 241 / 0.3)}.border-yellow-600{--tw-border-opacity:1;border-color:rgb(202 138 4 / var(--tw-border-opacity, 1))}.border-yellow-400{--tw-border-opacity:1;border-color:rgb(250 204 21 / var(--tw-border-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-gray-600{--tw-bg-opacity:1;background-color:rgb(75 85 99 / var(--tw-bg-opacity, 1))}.bg-gray-700{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.bg-gray-800{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.bg-gray-800\/50{background-color:rgb(31 41 55 / 0.5)}.bg-gray-900{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.bg-green-400{--tw-bg-opacity:1;background-color:rgb(74 222 128 / var(--tw-bg-opacity, 1))}.bg-green-600{--tw-bg-opacity:1;background-color:rgb(22 163 74 / var(--tw-bg-opacity, 1))}.bg-indigo-600{--tw-bg-opacity:1;background-color:rgb(79 70 229 / var(--tw-bg-opacity, 1))}.bg-purple-500{--tw-bg-opacity:1;background-color:rgb(168 85 247 / var(--tw-bg-opacity, 1))}.bg-purple-600{--tw-bg-opacity:1;background-color:rgb(147 51 234 / var(--tw-bg-opacity, 1))}.bg-red-600{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}.bg-red-700{--tw-bg-opacity:1;background-color:rgb(185 28 28 / var(--tw-bg-opacity, 1))}.bg-yellow-900\/30{background-color:rgb(113 63 18 / 0.3)}.bg-opacity-75{--tw-bg-opacity:0.75}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-gray-800{--tw-gradient-from:#1f2937 var(--tw-gradient-from-position);--tw-gradient-to:rgb(31 41 55 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-indigo-500{--tw-gradient-from:#6366f1 var(--tw-gradient-from-position);--tw-gradient-to:rgb(99 102 241 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-indigo-600\/20{--tw-gradient-from:rgb(79 70 229 / 0.2) var(--tw-gradient-from-position);--tw-gradient-to:rgb(79 70 229 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-gray-900{--tw-gradient-to:#111827 var(--tw-gradient-to-position)}.to-indigo-500\/20{--tw-gradient-to:rgb(99 102 241 / 0.2) var(--tw-gradient-to-position)}.to-indigo-600{--tw-gradient-to:#4f46e5 var(--tw-gradient-to-position)}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.p-1{padding:0.25rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.pb-2{padding-bottom:0.5rem}.pt-3{padding-top:0.75rem}.pt-4{padding-top:1rem}.pr-16{padding-right:4rem}.text-center{text-align:center}.text-right{text-align:right}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-6xl{font-size:3.75rem;line-height:1}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-green-400{--tw-text-opacity:1;color:rgb(74 222 128 / var(--tw-text-opacity, 1))}.text-indigo-300{--tw-text-opacity:1;color:rgb(165 180 252 / var(--tw-text-opacity, 1))}.text-indigo-400{--tw-text-opacity:1;color:rgb(129 140 248 / var(--tw-text-opacity, 1))}.text-indigo-600{--tw-text-opacity:1;color:rgb(79 70 229 / var(--tw-text-opacity, 1))}.text-orange-400{--tw-text-opacity:1;color:rgb(251 146 60 / var(--tw-text-opacity, 1))}.text-purple-400{--tw-text-opacity:1;color:rgb(192 132 252 / var(--tw-text-opacity, 1))}.text-red-400{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-100{--tw-text-opacity:1;color:rgb(254 249 195 / var(--tw-text-opacity, 1))}.text-yellow-200{--tw-text-opacity:1;color:rgb(254 240 138 / var(--tw-text-opacity, 1))}.text-yellow-300{--tw-text-opacity:1;color:rgb(253 224 71 / var(--tw-text-opacity, 1))}.text-yellow-400{--tw-text-opacity:1;color:rgb(250 204 21 / var(--tw-text-opacity, 1))}.opacity-0{opacity:0}.opacity-90{opacity:0.9}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-200{transition-duration:200ms}.duration-300{transition-duration:300ms}.duration-500{transition-duration:500ms}.file\:mr-4::file-selector-button{margin-right:1rem}.file\:rounded::file-selector-button{border-radius:0.25rem}.file\:border-0::file-selector-button{border-width:0px}.file\:bg-indigo-600::file-selector-button{--tw-bg-opacity:1;background-color:rgb(79 70 229 / var(--tw-bg-opacity, 1))}.file\:px-4::file-selector-button{padding-left:1rem;padding-right:1rem}.file\:py-2::file-selector-button{padding-top:0.5rem;padding-bottom:0.5rem}.file\:text-sm::file-selector-button{font-size:0.875rem;line-height:1.25rem}.file\:font-semibold::file-selector-button{font-weight:600}.file\:text-white::file-selector-button{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:scale-105:hover{--tw-scale-x:1.05;--tw-scale-y:1.05;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-500:hover{--tw-bg-opacity:1;background-color:rgb(107 114 128 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-600:hover{--tw-bg-opacity:1;background-color:rgb(75 85 99 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-700:hover{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.hover\:bg-green-700:hover{--tw-bg-opacity:1;background-color:rgb(21 128 61 / var(--tw-bg-opacity, 1))}.hover\:bg-indigo-700:hover{--tw-bg-opacity:1;background-color:rgb(67 56 202 / var(--tw-bg-opacity, 1))}.hover\:bg-purple-700:hover{--tw-bg-opacity:1;background-color:rgb(126 34 206 / var(--tw-bg-opacity, 1))}.hover\:bg-red-700:hover{--tw-bg-opacity:1;background-color:rgb(185 28 28 / var(--tw-bg-opacity, 1))}.hover\:bg-red-800:hover{--tw-bg-opacity:1;background-color:rgb(153 27 27 / var(--tw-bg-opacity, 1))}.hover\:from-indigo-600:hover{--tw-gradient-from:#4f46e5 var(--tw-gradient-from-position);--tw-gradient-to:rgb(79 70 229 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:to-indigo-700:hover{--tw-gradient-to:#4338ca var(--tw-gradient-to-position)}.hover\:text-gray-300:hover{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.hover\:text-purple-300:hover{--tw-text-opacity:1;color:rgb(216 180 254 / var(--tw-text-opacity, 1))}.hover\:text-red-300:hover{--tw-text-opacity:1;color:rgb(252 165 165 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:file\:bg-indigo-700::file-selector-button:hover{--tw-bg-opacity:1;background-color:rgb(67 56 202 / var(--tw-bg-opacity, 1))}.focus\:border-indigo-500:focus{--tw-border-opacity:1;border-color:rgb(99 102 241 / var(--tw-border-opacity, 1))}.focus\:border-purple-500:focus{--tw-border-opacity:1;border-color:rgb(168 85 247 / var(--tw-border-opacity, 1))}.focus\:ring-1:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-indigo-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(99 102 241 / var(--tw-ring-opacity, 1))}.focus\:ring-purple-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(168 85 247 / var(--tw-ring-opacity, 1))}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-50:disabled{opacity:0.5}@media (min-width: 768px){.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}}@media (min-width: 1024px){.lg\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}}</style></head>
+  <body class="flex h-screen overflow-hidden" style="display: flex;">
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="fixed inset-0 bg-gray-900 flex items-center justify-center z-50" style="display: none;">
+      <div class="text-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-400 mx-auto mb-4"></div>
+        <p class="text-white text-lg">Carregando...</p>
+      </div>
+    </div>
+
+    <!-- Notification for updates (can be adapted for web notifications) -->
+    <div id="update-notification" class="hidden absolute bottom-4 right-4 bg-indigo-600 text-white p-4 rounded-lg shadow-lg z-50 animate-bounce">
+      <p class="font-semibold">Nova versão disponível!</p>
+      <p class="text-sm">
+        A versão <span id="update-version"></span> está pronta.
+      </p>
+      <button onclick="document.getElementById('update-notification').classList.add('hidden')" class="absolute top-1 right-1 text-white text-lg">
+        ×
+      </button>
+    </div>
+
+    <!-- === SIDEBAR (CONTROLS) === -->
+    <aside class="w-1/3 max-w-md bg-gray-900 p-6 overflow-y-auto">
+      <!-- User Info -->
+      <div id="user-info" class="mb-4 p-3 bg-gray-800 rounded-lg border border-gray-700">
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-400">
+                  <i class="fas fa-user mr-1"></i>thiagocanaispessoais@gmail.com (free)
+                </span>
+                <div class="flex items-center space-x-2">
+                  <button id="stats-btn" class="text-purple-400 hover:text-purple-300 text-sm transition-colors" title="Dashboard de Performance">
+                    <i class="fas fa-chart-line mr-1"></i>Stats
+                  </button>
+                  <button id="logout-btn" class="text-red-400 hover:text-red-300 text-sm">
+                    <i class="fas fa-sign-out-alt mr-1"></i>Sair
+                  </button>
+                </div>
+              </div>
+              
+            <div class="security-buttons mt-2 flex gap-2">
+      <button id="show-devices-btn" style="display:none;" class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded">
+      <i class="fas fa-mobile-alt mr-1"></i>Dispositivos
+      </button>
+      <button id="show-logs-btn" style="display:none;" class="text-xs bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded">
+      <i class="fas fa-clipboard-list mr-1"></i>Logs
+      </button>
+    </div></div>
+
+      <div class="flex items-center mb-6">
+        <i class="fas fa-robot text-3xl text-indigo-400 mr-4"></i>
+        <h1 class="text-2xl font-bold text-white">BoredFy</h1>
+      </div>
+
+      <!-- Gemini API Keys Section -->
+      <div id="gemini-api-section" class="space-y-4 mb-6">
+        <div class="collapsible-header flex justify-between items-center border-b border-gray-700 pb-2">
+          <h2 class="text-lg font-semibold text-indigo-300 flex items-center">
+            <i class="fas fa-chevron-down collapsible-icon mr-2 text-sm"></i>
+            API Keys (Gemini)
+          <span class="key-counter text-sm text-gray-400" title="4 não testadas"> (4/4)</span></h2>
+          <div class="flex items-center space-x-2">
+            <select id="gemini-model-select" class="bg-gray-800 border border-gray-600 text-gray-300 text-xs rounded px-2 py-1 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
+              <option value="gemini-2.5-pro-preview-06-05">2.5-Pro</option>
+              <option value="gemini-2.5-flash">2.5-Flash</option>
+            </select>
+            <button id="add-gemini-key-btn" title="Adicionar outra chave Gemini" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-1 px-3 rounded-md transition-colors">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="gemini-keys-container" class="collapsible-content space-y-3 mt-3"><div class="flex items-center space-x-2 api-key-row">
+        <div class="flex-1 relative">
+            <input type="password" value="" class="gemini-api-key-input w-full bg-gray-800 border border-gray-600 rounded-md p-2 text-white pr-16 border-yellow-400" placeholder="Cole uma chave da API Gemini aqui">
+            <div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
+                <button class="password-toggle-btn text-gray-400 hover:text-gray-300 p-1" title="Mostrar/Esconder API Key">
+                    <i class="fas fa-eye text-xs"></i>
+                </button>
+                <span class="validation-status text-xs text-yellow-400" title="Validando API Key..."><i class="fas fa-spinner fa-spin"></i></span>
+            </div>
+        </div>
+        <button class="remove-api-key-btn bg-red-700 hover:bg-red-800 text-white font-bold py-1 px-3 rounded-md transition-colors" title="Remover chave"><i class="fas fa-trash"></i></button>
+    </div><div class="flex items-center space-x-2 api-key-row">
+        <div class="flex-1 relative">
+            <input type="password" value="" class="gemini-api-key-input w-full bg-gray-800 border border-gray-600 rounded-md p-2 text-white pr-16 border-yellow-400" placeholder="Cole uma chave da API Gemini aqui">
+            <div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
+                <button class="password-toggle-btn text-gray-400 hover:text-gray-300 p-1" title="Mostrar/Esconder API Key">
+                    <i class="fas fa-eye text-xs"></i>
+                </button>
+                <span class="validation-status text-xs text-yellow-400" title="Validando API Key..."><i class="fas fa-spinner fa-spin"></i></span>
+            </div>
+        </div>
+        <button class="remove-api-key-btn bg-red-700 hover:bg-red-800 text-white font-bold py-1 px-3 rounded-md transition-colors" title="Remover chave"><i class="fas fa-trash"></i></button>
+    </div><div class="flex items-center space-x-2 api-key-row">
+        <div class="flex-1 relative">
+            <input type="password" value="" class="gemini-api-key-input w-full bg-gray-800 border border-gray-600 rounded-md p-2 text-white pr-16 border-yellow-400" placeholder="Cole uma chave da API Gemini aqui">
+            <div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
+                <button class="password-toggle-btn text-gray-400 hover:text-gray-300 p-1" title="Mostrar/Esconder API Key">
+                    <i class="fas fa-eye text-xs"></i>
+                </button>
+                <span class="validation-status text-xs text-yellow-400" title="Validando API Key..."><i class="fas fa-spinner fa-spin"></i></span>
+            </div>
+        </div>
+        <button class="remove-api-key-btn bg-red-700 hover:bg-red-800 text-white font-bold py-1 px-3 rounded-md transition-colors" title="Remover chave"><i class="fas fa-trash"></i></button>
+    </div><div class="flex items-center space-x-2 api-key-row">
+        <div class="flex-1 relative">
+            <input type="password" value="" class="gemini-api-key-input w-full bg-gray-800 border border-gray-600 rounded-md p-2 text-white pr-16 border-yellow-400" placeholder="Cole uma chave da API Gemini aqui">
+            <div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
+                <button class="password-toggle-btn text-gray-400 hover:text-gray-300 p-1" title="Mostrar/Esconder API Key">
+                    <i class="fas fa-eye text-xs"></i>
+                </button>
+                <span class="validation-status text-xs text-yellow-400" title="Validando API Key..."><i class="fas fa-spinner fa-spin"></i></span>
+            </div>
+        </div>
+        <button class="remove-api-key-btn bg-red-700 hover:bg-red-800 text-white font-bold py-1 px-3 rounded-md transition-colors" title="Remover chave"><i class="fas fa-trash"></i></button>
+    </div></div>
+      </div>
+
+      <!-- Generation Mode -->
+      <div class="space-y-4 mb-6">
+        <h2 class="text-lg font-semibold text-indigo-300 border-b border-gray-700 pb-2">
+          1. Modalidade de Geração
+        </h2>
+        <div id="generation-mode-switch" class="flex space-x-2">
+          <!-- <input type="radio" id="mode-classic" name="generation-mode" value="classic" class="mode-radio">
+                <label for="mode-classic" class="mode-label">Clássico</label> -->
+          <input type="radio" id="mode-premise" name="generation-mode" value="pair" class="mode-radio" checked="">
+          <label for="mode-premise" class="mode-label">Premissa</label>
+        </div>
+      </div>
+
+      <!-- Agent Selection -->
+      <div class="space-y-4 mb-6">
+        <h2 class="text-lg font-semibold text-indigo-300 border-b border-gray-700 pb-2">
+          2. Agente
+        </h2>
+        <div>
+          <label for="agent-select" class="block text-sm font-medium text-gray-400 mb-1">
+            Escolha o Agente<span class="custom-agents-counter text-xs text-blue-400"> (5 personalizados)</span>
+          </label>
+          <div class="flex space-x-2">
+            <select id="agent-select" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"><option value="agente-premissa-exemplo">Premissa de Exemplo</option><option value="maquiavel">maquiavel (Personalizado)</option><option value="alan-wats">alan wats (Personalizado)</option><option value="maquiavel-of">maquiavel of (Personalizado)</option><option value="elegido">elegido (Personalizado)</option><option value="ana-maria">ana maria (Personalizado)</option></select>
+          </div>
+        </div>
+        <div class="flex space-x-2 mt-4">
+          <button id="new-agent-btn" title="Criar novo agente" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
+            <i class="fas fa-plus mr-2"></i>Criar Agente
+          </button>
+          <button id="edit-agent-btn" title="Editar agente selecionado" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition-colors" disabled="">
+            <i class="fas fa-edit mr-2"></i>Editar Agente
+          </button>
+        </div>
+      </div>
+
+      <!-- Titles/Links Input -->
+      <div class="space-y-4 mb-6">
+        <h2 class="text-lg font-semibold text-indigo-300 border-b border-gray-700 pb-2">
+          3. Títulos ou Resumos
+        </h2>
+        <div id="titles-list" class="space-y-3"></div>
+        <div class="flex items-center space-x-2">
+          <input type="text" id="new-title-input" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 text-white focus:ring-2 focus:ring-indigo-500" placeholder="Digite Aqui">
+          <button id="add-title-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-md transition-colors">
+            <i class="fas fa-plus"></i> Add
+          </button>
+        </div>
+        <div class="text-center text-gray-500 text-sm my-2">OU</div>
+        <div>
+          <label for="file-upload" class="w-full text-center cursor-pointer bg-gray-700 hover:bg-gray-600 text-white text-sm font-semibold py-2 px-4 rounded-md block">
+            <i class="fas fa-file-upload mr-2"></i> Subir arquivo .txt
+          </label>
+          <input type="file" id="file-upload" accept=".txt" class="hidden">
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="mt-8 space-y-2">
+        <button id="generate-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-md text-lg transition-transform transform hover:scale-105">
+          <i class="fas fa-cogs mr-2"></i> Gerar Roteiros
+        </button>
+        <button id="stop-btn" class="hidden w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-md text-lg">
+          <i class="fas fa-stop-circle mr-2"></i> Parar Geração
+        </button>
+      </div>
+    </aside>
+
+    <!-- === MAIN CONTENT (RESULTS) === -->
+    <main class="flex-1 p-6 flex flex-col bg-gray-800">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-white">
+          Resultados da Geração
+          <span id="scripts-counter" class="hidden text-sm font-normal text-gray-400 ml-2 relative">
+            <i class="fas fa-info-circle text-xs ml-1 cursor-help tooltip-trigger" data-tooltip="Sucessos / Total processados"></i>
+            <div class="tooltip absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded shadow-lg opacity-0 pointer-events-none transition-opacity duration-200 whitespace-nowrap z-50">
+              Sucessos / Total processados
+            </div>
+          </span>
+        </h2>
+        <div class="flex gap-2">
+          <button id="user-files-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">
+            <i class="fas fa-folder-open mr-2"></i> Meus Arquivos
+          </button>
+        </div>
+      </div>
+      <div id="main-status-bar" class="hidden p-3 mb-4 text-center text-white rounded-md transition-colors duration-300"></div>
+      <div id="results-area" class="flex-1 bg-gray-900 rounded-lg p-4 overflow-y-auto border border-gray-700">
+        <div id="placeholder" class="h-full flex flex-col justify-center items-center text-gray-500">
+          <i class="fas fa-file-alt text-6xl mb-4"></i>
+          <p class="text-lg">Seus roteiros aparecerão aqui...</p>
+          <p class="text-sm">
+            Configure as opções à esquerda e clique em "Gerar Roteiros".
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <!-- AI Progress Floating Indicator (minimized state) -->
+    <div id="ai-floating-indicator" class="fixed bottom-4 right-4 bg-purple-600 text-white p-4 rounded-lg shadow-xl cursor-pointer transition-all duration-300 transform hover:scale-105 hidden z-40 animate-pulse">
+      <div class="flex items-center space-x-3">
+        <div class="relative">
+          <i class="fas fa-robot text-xl animate-pulse"></i>
+          <div class="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-ping"></div>
+        </div>
+        <div>
+          <div class="text-sm font-semibold">Criando Agente IA</div>
+          <div class="text-xs opacity-90" id="ai-floating-progress">
+            Processando...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- === MODALS === -->
+    <!-- User Files Modal -->
+    <div id="user-files-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-50">
+      <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-3xl space-y-4 border border-gray-600 max-h-screen overflow-y-auto">
+        <div class="flex justify-between items-center">
+          <h2 class="text-2xl font-bold text-white">
+            <i class="fas fa-folder-open mr-2"></i> Meus Arquivos (24h)
+          </h2>
+          <button id="close-user-files-modal" class="text-gray-400 hover:text-white text-xl">
+            ×
+          </button>
+        </div>
+        <div id="user-files-status" class="text-sm text-gray-300"></div>
+        <div id="user-files-list" class="space-y-2"></div>
+      </div>
+    </div>
+    <!-- Agent Creation/Editing Modal -->
+    <div id="agent-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-50">
+      <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-3xl space-y-4 border border-gray-600 max-h-screen overflow-y-auto">
+        <h2 class="text-2xl font-bold text-white">Criar/Editar Agente</h2>
+        <input type="hidden" id="editing-agent-key">
+        <div>
+          <label for="agent-name" class="block text-sm font-medium text-gray-400 mb-1">Nome do Agente</label>
+          <input type="text" id="agent-name" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 text-white" placeholder="Ex: Criança Prodígio">
+        </div>
+        <div>
+          <label for="agent-type" class="block text-sm font-medium text-gray-400 mb-1">Tipo de Agente</label>
+          <select id="agent-type" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 text-white">
+            <!-- <option value="classic">Clássico (Individual)</option> -->
+            <option value="pair">Par: Premissa + Roteiro</option>
+          </select>
+        </div>
+
+        <!-- Classic Agent Prompt -->
+        <div id="single-prompt-container">
+          <label for="agent-prompt" class="block text-sm font-medium text-gray-400 mb-1">Prompt do Agente Clássico</label>
+          <textarea id="agent-prompt" rows="15" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 text-white font-mono text-sm" placeholder="Cole o prompt completo aqui..."></textarea>
+        </div>
+
+        <!-- Premise/Pair Agent Prompts -->
+        <div id="pair-prompt-container" class="hidden space-y-4">
+          <div>
+            <label for="primary-language-input" class="block text-sm font-medium text-gray-400 mb-1">1. Idioma Principal da Premissa</label>
+            <div id="primary-language-tag-container" class="flex flex-wrap gap-2 mb-2"></div>
+            <div class="flex items-center space-x-2">
+              <div class="relative w-full">
+                <input type="text" id="primary-language-input" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 text-white focus:ring-2 focus:ring-indigo-500" placeholder="Digite um idioma (ex: portu)" autocomplete="off">
+                <div id="primary-language-suggestions" class="autocomplete-suggestions hidden"></div>
+              </div>
+              <button type="button" id="add-primary-language-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-md transition-colors flex-shrink-0">
+                <i class="fas fa-plus"></i> Add
+              </button>
+            </div>
+          </div>
+          <div>
+            <label for="premise-prompt-input" class="block text-sm font-medium text-gray-400 mb-1">2. Prompt da Premissa Principal</label>
+            <textarea id="premise-prompt-input" rows="8" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 text-white font-mono text-sm"></textarea>
+          </div>
+          <div>
+            <label for="script-prompt-input" class="block text-sm font-medium text-gray-400 mb-1">3. Prompt do Roteiro (Regras Globais)</label>
+            <textarea id="script-prompt-input" rows="8" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 text-white font-mono text-sm" placeholder="Cole aqui seu prompt mestre com todas as regras de estilo, tom, etc."></textarea>
+          </div>
+          <div>
+            <label for="script-structure-input" class="block text-sm font-medium text-gray-400 mb-1">4. Estrutura de Blocos da História</label>
+            <textarea id="script-structure-input" rows="10" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 text-white font-mono text-sm" placeholder="# Ato 1: Nome do Bloco
+Instruções..."></textarea>
+          </div>
+          <div>
+            <label for="adaptation-prompt-input" class="block text-sm font-medium text-gray-400 mb-1">5. Prompt do Agente de Adaptação Cultural</label>
+            <textarea id="adaptation-prompt-input" rows="8" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 text-white font-mono text-sm" placeholder="Instruções para adaptar a PREMISSA para outra língua/cultura..."></textarea>
+          </div>
+          <div class="border-t border-gray-700 pt-4">
+            <h3 class="text-lg font-semibold text-indigo-300 mb-2">
+              6. Idiomas Adicionais para Adaptação
+            </h3>
+            <div id="additional-languages-tags" class="flex flex-wrap gap-2 mb-3"></div>
+            <div class="flex items-center space-x-2">
+              <div class="relative w-full">
+                <input type="text" id="new-language-input" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 text-white focus:ring-2 focus:ring-indigo-500" placeholder="Digite um idioma (ex: eng)" autocomplete="off">
+                <div id="additional-language-suggestions" class="autocomplete-suggestions hidden"></div>
+              </div>
+              <button type="button" id="add-language-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-md transition-colors flex-shrink-0">
+                <i class="fas fa-plus"></i> Add
+              </button>
+            </div>
+          </div>
+          <div class="border-t border-gray-700 pt-4">
+            <h3 class="text-lg font-semibold text-indigo-300 mb-3">
+              7. Narração (TTS)
+            </h3>
+            <div class="flex items-center mb-4">
+              <input id="tts-enabled-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+              <label for="tts-enabled-checkbox" class="ml-3 block text-sm font-medium text-gray-300">Habilitar Narração de Áudio</label>
+            </div>
+            <div id="tts-config-container" class="hidden space-y-3">
+              <p class="text-sm text-gray-400">
+                Selecione uma voz para cada idioma. As vozes aparecerão aqui
+                após adicionar os idiomas acima.
+              </p>
+              <div id="tts-voices-container" class="space-y-3"></div>
+            </div>
+          </div>
+
+          <!-- ============= SEÇÃO DE MÍDIA VISUAL ============= -->
+          <div class="border-t border-gray-700 pt-4">
+            <h3 class="text-lg font-semibold text-indigo-300 mb-3">
+              8. Mídia Visual (Opcional)
+            </h3>
+            <div class="flex items-center mb-4">
+              <input id="visual-media-enabled-checkbox" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+              <label for="visual-media-enabled-checkbox" class="ml-3 block text-sm font-medium text-gray-300">Habilitar Geração de Mídia Visual</label>
+            </div>
+            <div id="visual-media-config-container" class="hidden space-y-4">
+              <!-- Tipo de Mídia -->
+              <div>
+                <label for="visual-media-type-select" class="block text-sm font-medium text-gray-400 mb-1">Tipo de Mídia</label>
+                <select id="visual-media-type-select" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 text-white">
+                  <option value="image">Imagens (Imagen 3 nano/banana)</option>
+                </select>
+              </div>
+
+              <!-- Configuração de Imagens -->
+              <div id="image-config-section" class="hidden space-y-3">
+                <div>
+                  <label for="image-prompt-textarea" class="block text-sm font-medium text-gray-400 mb-1">Template de Prompt para Imagens</label>
+                  <textarea id="image-prompt-textarea" rows="3" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 text-white text-sm" placeholder="Ex: Crie imagens cinematográficas e impactantes que representem visualmente..."></textarea>
+                  <p class="text-xs text-gray-500 mt-1">
+                    O contexto do roteiro será adicionado automaticamente
+                  </p>
+                </div>
+
+                <div>
+                  <label for="image-count-input" class="block text-sm font-medium text-gray-400 mb-1">Quantidade de Imagens (1-20)</label>
+                  <input type="number" id="image-count-input" min="1" max="20" value="5" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 text-white">
+                  <p class="text-xs text-gray-500 mt-1">
+                    Cada imagem demora ~30-60 segundos para gerar
+                  </p>
+                </div>
+
+                <!-- Imagens de Referência -->
+                <div>
+                  <label for="image-reference-input" class="block text-sm font-medium text-gray-400 mb-1">Imagens de Referência (opcional)</label>
+                  <p class="text-xs text-gray-500 mb-2">
+                    Faça upload de até 10 imagens (JPEG, PNG, WEBP - máx 5MB cada) para usar como base na geração
+                  </p>
+                  <input type="file" id="image-reference-input" accept="image/jpeg,image/jpg,image/png,image/webp" multiple="" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 text-white text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700">
+
+                  <!-- Preview das Imagens de Referência -->
+                  <div id="image-reference-preview" class="mt-3 flex flex-wrap gap-2">
+                    <!-- Preview das imagens aparecerá aqui via JavaScript -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Configuração de Vídeo -->
+              <div id="video-config-section" class="hidden space-y-3">
+                <div>
+                  <label for="video-prompt-textarea" class="block text-sm font-medium text-gray-400 mb-1">Template de Prompt para Vídeo</label>
+                  <textarea id="video-prompt-textarea" rows="3" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 text-white text-sm" placeholder="Ex: Crie um vídeo cinematográfico de 8 segundos que capture a essência..."></textarea>
+                  <p class="text-xs text-gray-500 mt-1">
+                    O contexto do roteiro será adicionado automaticamente. Duração
+                    fixa: 8 segundos (limitação da API Veo 2)
+                  </p>
+                </div>
+
+                <!-- Aviso de Custo VEO2 -->
+                <div class="bg-yellow-900/30 border border-yellow-600 p-3 rounded-md">
+                  <p class="text-sm text-yellow-200">
+                    <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+                    <strong class="text-yellow-300">ATENÇÃO - Custo da API:</strong>
+                  </p>
+                  <p class="text-xs text-yellow-100 mt-2">
+                    • Veo 2 cobra <strong>$0.51 USD por segundo</strong> de vídeo gerado<br>
+                    • Cada vídeo de 8 segundos = <strong>~$4.00 USD</strong> em créditos da API<br>
+                    • Certifique-se de ter créditos suficientes antes de gerar
+                  </p>
+                </div>
+              </div>
+
+              <!-- Informações -->
+              <div class="bg-gray-700 p-3 rounded-md">
+                <p class="text-xs text-gray-400">
+                  <i class="fas fa-info-circle text-indigo-400"></i>
+                  <strong class="text-indigo-300">Importante:</strong> As APIs
+                  Imagen 3 e Veo 2 usam a mesma API Key do Gemini. Certifique-se
+                  de que suas chaves têm acesso a esses serviços.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Action Buttons -->
+        <div class="flex justify-between items-center pt-4 border-t border-gray-600 mt-4">
+          <button id="delete-agent-btn" class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-md hidden">
+            <i class="fas fa-trash"></i> Deletar
+          </button>
+          <div class="space-x-4">
+            <button id="cancel-agent-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md">
+              Cancelar
+            </button>
+            <button id="save-agent-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md">
+              Salvar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agent Method Selection Modal -->
+    <div id="agent-method-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-50">
+      <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md space-y-4 border border-gray-600">
+        <h2 class="text-xl font-bold text-white mb-4">
+          Como deseja criar o agente?
+        </h2>
+        <div class="space-y-3">
+          <button id="create-manual-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-md transition-colors flex items-center justify-center space-x-2">
+            <i class="fas fa-edit"></i>
+            <span>Criar Manualmente</span>
+          </button>
+          <button id="create-ai-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white p-3 rounded-md transition-colors flex items-center justify-center space-x-2">
+            <i class="fas fa-robot"></i>
+            <span>Criar com IA</span>
+          </button>
+        </div>
+        <div class="mt-4 text-right">
+          <button id="cancel-method-btn" class="text-gray-400 hover:text-gray-300 transition-colors">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Agent Creation Modal -->
+    <div id="ai-agent-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-50">
+      <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-4xl space-y-4 border border-gray-600 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold text-white">Criar Agente com IA</h2>
+          <button id="minimize-ai-modal-btn" class="bg-gray-600 hover:bg-gray-500 text-white px-3 py-1 rounded-md text-sm transition-colors" title="Minimizar">
+            -
+          </button>
+        </div>
+
+        <!-- Step 1: Input Scripts -->
+        <div id="ai-input-step" class="space-y-4">
+          <div>
+            <label for="ai-agent-name" class="block text-sm font-medium text-gray-400 mb-1">
+              Nome do Agente:
+            </label>
+            <input type="text" id="ai-agent-name" class="w-full bg-gray-700 border border-gray-600 rounded-md p-2 text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500" placeholder="Ex: Analista de Suspense, Contador de Histórias..." maxlength="50">
+            <div class="text-xs text-gray-500 mt-1">
+              Este nome será usado para identificar o agente criado
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-2">
+              Selecione os arquivos de roteiros (.txt ou .md):
+            </label>
+            <div class="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center">
+              <input type="file" id="ai-scripts-files" multiple="" accept=".txt,.md" class="hidden">
+              <label for="ai-scripts-files" class="cursor-pointer flex flex-col items-center space-y-2">
+                <i class="fas fa-upload text-3xl text-gray-400"></i>
+                <span class="text-gray-300">Clique para selecionar arquivos</span>
+                <span class="text-xs text-gray-500">Ou arraste e solte aqui</span>
+              </label>
+            </div>
+            <div class="text-xs text-gray-500 mt-2">
+              Aceita arquivos .txt e .md • Cada arquivo = 1 roteiro • Máximo 6
+              arquivos • 5MB total
+            </div>
+
+            <!-- Lista de arquivos selecionados -->
+            <div id="ai-files-list" class="mt-4 space-y-2 hidden">
+              <h4 class="text-sm font-medium text-gray-400">
+                Arquivos selecionados:
+              </h4>
+              <div id="ai-files-container" class="space-y-1"></div>
+              <div class="text-xs text-gray-500">
+                <span id="ai-files-count">0 arquivos</span> •
+                <span id="ai-files-size">0 KB</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-between">
+            <button id="cancel-ai-btn" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md transition-colors">
+              Cancelar
+            </button>
+            <button id="start-ai-analysis-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled="">
+              <i class="fas fa-magic mr-2"></i>
+              Iniciar Análise
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: Processing -->
+        <div id="ai-processing-step" class="space-y-6 hidden">
+          <!-- Ícone central do robô -->
+          <div class="flex justify-center mb-8">
+            <div class="relative">
+              <i class="fas fa-robot text-6xl text-purple-400 animate-pulse"></i>
+              <div class="absolute -top-1 -right-1 w-4 h-4 bg-purple-500 rounded-full animate-ping"></div>
+            </div>
+          </div>
+
+          <!-- Status de conexão -->
+          <div class="text-center mb-8">
+            <p class="text-sm text-gray-400 mb-4" id="ai-connection-status">
+              Iniciando análise de roteiros...
+            </p>
+          </div>
+
+          <!-- Campos de resultado dos 4 passos -->
+          <div class="space-y-4">
+            <div class="bg-gray-700 border border-gray-600 rounded-lg p-4">
+              <div class="flex items-center space-x-3">
+                <i class="fas fa-search text-purple-400"></i>
+                <span class="text-white font-medium">Análise de Roteiros</span>
+                <div class="flex-1 text-right">
+                  <span id="step1-status" class="text-gray-400 text-sm">Aguardando...</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-gray-700 border border-gray-600 rounded-lg p-4">
+              <div class="flex items-center space-x-3">
+                <i class="fas fa-lightbulb text-purple-400"></i>
+                <span class="text-white font-medium">Template de Premissa</span>
+                <div class="flex-1 text-right">
+                  <span id="step2-status" class="text-gray-400 text-sm">Aguardando...</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-gray-700 border border-gray-600 rounded-lg p-4">
+              <div class="flex items-center space-x-3">
+                <i class="fas fa-file-alt text-purple-400"></i>
+                <span class="text-white font-medium">Template de Roteiro</span>
+                <div class="flex-1 text-right">
+                  <span id="step3-status" class="text-gray-400 text-sm">Aguardando...</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-gray-700 border border-gray-600 rounded-lg p-4">
+              <div class="flex items-center space-x-3">
+                <i class="fas fa-layer-group text-purple-400"></i>
+                <span class="text-white font-medium">Estrutura de Blocos</span>
+                <div class="flex-1 text-right">
+                  <span id="step4-status" class="text-gray-400 text-sm">Aguardando...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Preview -->
+        <div id="ai-preview-step" class="space-y-4 hidden">
+          <h3 class="text-lg font-semibold text-white">
+            Preview do Agente Gerado
+          </h3>
+          <div id="ai-preview-content" class="space-y-4">
+            <!-- Será preenchido dinamicamente -->
+          </div>
+          <div class="flex justify-between">
+            <button id="restart-ai-btn" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md transition-colors">
+              <i class="fas fa-redo mr-2"></i>
+              Refazer
+            </button>
+            <div class="space-x-2">
+              <button id="edit-ai-agent-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors">
+                <i class="fas fa-edit mr-2"></i>
+                Editar
+              </button>
+              <button id="save-ai-agent-btn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md transition-colors">
+                <i class="fas fa-save mr-2"></i>
+                Salvar Agente
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cancel Confirmation Modal -->
+    <div id="cancel-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-50">
+      <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md space-y-6 border border-gray-600">
+        <h2 class="text-2xl font-bold text-white text-center">Parar Geração</h2>
+        <p class="text-center text-gray-300">
+          Tem certeza de que deseja cancelar a operação em andamento? Todo o
+          progresso será perdido.
+        </p>
+        <div class="flex justify-center items-center space-x-4 pt-4">
+          <button id="reject-cancel-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-md">
+            Não
+          </button>
+          <button id="confirm-cancel-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-md">
+            Sim, Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Dashboard Modal -->
+    <div id="stats-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-50">
+      <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg shadow-2xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-indigo-500/30">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center">
+              <i class="fas fa-chart-line text-white text-lg"></i>
+            </div>
+            <div>
+              <h2 class="text-2xl font-bold text-white">
+                Dashboard de Performance
+              </h2>
+              <p class="text-sm text-gray-400">
+                Suas estatísticas de produtividade
+              </p>
+            </div>
+          </div>
+          <button id="close-stats-modal" class="text-gray-400 hover:text-white text-xl transition-colors">
+            ×
+          </button>
+        </div>
+
+        <!-- Loading State -->
+        <div id="stats-loading" class="text-center py-12">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-400 mx-auto mb-4"></div>
+          <p class="text-gray-400">Carregando suas estatísticas...</p>
+        </div>
+
+        <!-- Stats Content -->
+        <div id="stats-content" class="hidden">
+          <!-- Level & Streak Banner -->
+          <div class="bg-gradient-to-r from-indigo-600/20 to-indigo-500/20 border border-indigo-500/30 rounded-lg p-4 mb-6">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center">
+                  <i class="fas fa-crown text-white text-xl"></i>
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold text-white" id="user-level">
+                    Carregando...
+                  </h3>
+                  <div class="w-32 bg-gray-700 rounded-full h-2 mt-1">
+                    <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 h-2 rounded-full transition-all duration-500" id="level-progress" style="width: 0%"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="flex items-center space-x-2 mb-1">
+                  <i class="fas fa-fire text-orange-400"></i>
+                  <span class="text-2xl font-bold text-white" id="streak-count">0</span>
+                  <span class="text-sm text-gray-400">dias</span>
+                </div>
+                <p class="text-xs text-gray-500">Streak consecutivo</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Stats Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <!-- Scripts Today -->
+            <div class="bg-gray-800/50 border border-gray-600 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <i class="fas fa-file-alt text-green-400 text-lg"></i>
+                <span class="text-xs text-gray-400">HOJE</span>
+              </div>
+              <div class="text-2xl font-bold text-white countup" data-target="0" id="scripts-today">
+                0
+              </div>
+              <p class="text-sm text-gray-400">Roteiros</p>
+            </div>
+
+            <!-- TTS Today -->
+            <div class="bg-gray-800/50 border border-gray-600 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <i class="fas fa-volume-up text-blue-400 text-lg"></i>
+                <span class="text-xs text-gray-400">HOJE</span>
+              </div>
+              <div class="text-2xl font-bold text-white countup" data-target="0" id="tts-today">
+                0
+              </div>
+              <p class="text-sm text-gray-400">Narrações</p>
+            </div>
+
+            <!-- Total Audio -->
+            <div class="bg-gray-800/50 border border-gray-600 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <i class="fas fa-clock text-purple-400 text-lg"></i>
+                <span class="text-xs text-gray-400">TOTAL</span>
+              </div>
+              <div class="text-2xl font-bold text-white" id="total-audio">
+                0m
+              </div>
+              <p class="text-sm text-gray-400">Áudio criado</p>
+            </div>
+
+            <!-- Days Active -->
+            <div class="bg-gray-800/50 border border-gray-600 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <i class="fas fa-calendar-alt text-orange-400 text-lg"></i>
+                <span class="text-xs text-gray-400">TEMPO</span>
+              </div>
+              <div class="text-2xl font-bold text-white countup" data-target="0" id="days-active">
+                0
+              </div>
+              <p class="text-sm text-gray-400">Dias ativos</p>
+            </div>
+          </div>
+
+          <!-- Period Stats -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Scripts Stats -->
+            <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+              <h4 class="text-lg font-semibold text-white mb-4 flex items-center">
+                <i class="fas fa-file-alt text-green-400 mr-2"></i>
+                Roteiros Gerados
+              </h4>
+              <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">Esta semana</span>
+                  <span class="text-xl font-bold text-white countup" data-target="0" id="scripts-week">0</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">Este mês</span>
+                  <span class="text-xl font-bold text-white countup" data-target="0" id="scripts-month">0</span>
+                </div>
+                <div class="flex justify-between items-center border-t border-gray-600 pt-3">
+                  <span class="text-gray-400">Total geral</span>
+                  <span class="text-xl font-bold text-green-400 countup" data-target="0" id="scripts-total">0</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- TTS Stats -->
+            <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+              <h4 class="text-lg font-semibold text-white mb-4 flex items-center">
+                <i class="fas fa-volume-up text-blue-400 mr-2"></i>
+                Narrações TTS
+              </h4>
+              <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">Esta semana</span>
+                  <span class="text-xl font-bold text-white countup" data-target="0" id="tts-week">0</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-400">Este mês</span>
+                  <span class="text-xl font-bold text-white countup" data-target="0" id="tts-month">0</span>
+                </div>
+                <div class="flex justify-between items-center border-t border-gray-600 pt-3">
+                  <span class="text-gray-400">Total geral</span>
+                  <span class="text-xl font-bold text-blue-400 countup" data-target="0" id="tts-total">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Share Section -->
+          <div class="bg-gradient-to-r from-indigo-600/20 to-indigo-500/20 border border-indigo-500/30 rounded-lg p-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-lg font-semibold text-white mb-1">
+                  Compartilhe suas conquistas!
+                </h4>
+                <p class="text-sm text-gray-400">
+                  Mostre sua produtividade para o mundo
+                </p>
+              </div>
+              <button id="share-stats-btn" class="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                <i class="fas fa-share-alt"></i>
+                <span>Compartilhar Stats</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error State -->
+        <div id="stats-error" class="hidden text-center py-12">
+          <i class="fas fa-exclamation-triangle text-yellow-400 text-4xl mb-4"></i>
+          <p class="text-gray-400 mb-4">Erro ao carregar estatísticas</p>
+          <button id="retry-stats-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors">
+            Tentar Novamente
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts de rastreamento removidos para privacidade -->
+
+    <!-- JavaScript para funcionalidade dos botões e modais -->
+    <script>
+      // Funções para abrir/fechar modais
+      function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+          modal.classList.remove('hidden');
+        }
+      }
+
+      function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+          modal.classList.add('hidden');
+        }
+      }
+
+      // Inicialização quando o DOM carregar
+      document.addEventListener('DOMContentLoaded', function() {
+        
+        // Botão Stats
+        const statsBtn = document.getElementById('stats-btn');
+        if (statsBtn) {
+          statsBtn.addEventListener('click', () => openModal('stats-modal'));
+        }
+
+        // Botão fechar Stats
+        const closeStatsBtn = document.getElementById('close-stats-modal');
+        if (closeStatsBtn) {
+          closeStatsBtn.addEventListener('click', () => closeModal('stats-modal'));
+        }
+
+        // Botão Meus Arquivos
+        const userFilesBtn = document.getElementById('user-files-btn');
+        if (userFilesBtn) {
+          userFilesBtn.addEventListener('click', () => openModal('user-files-modal'));
+        }
+
+        // Botão fechar Meus Arquivos
+        const closeUserFilesBtn = document.getElementById('close-user-files-modal');
+        if (closeUserFilesBtn) {
+          closeUserFilesBtn.addEventListener('click', () => closeModal('user-files-modal'));
+        }
+
+        // Botão Criar Agente - Abre modal de escolha de método
+        const newAgentBtn = document.getElementById('new-agent-btn');
+        if (newAgentBtn) {
+          newAgentBtn.addEventListener('click', () => {
+            openModal('agent-method-modal');
+          });
+        }
+
+        // Botão Editar Agente - Abre diretamente o modal de edição manual
+        const editAgentBtn = document.getElementById('edit-agent-btn');
+        const agentSelect = document.getElementById('agent-select');
+        
+        // Habilitar/desabilitar botão editar baseado na seleção
+        if (agentSelect && editAgentBtn) {
+          agentSelect.addEventListener('change', () => {
+            const selectedValue = agentSelect.value;
+            // Desabilitar apenas se for o agente exemplo
+            if (selectedValue === 'agente-premissa-exemplo') {
+              editAgentBtn.disabled = true;
+              editAgentBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+              editAgentBtn.disabled = false;
+              editAgentBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+          });
+          
+          // Inicializar estado
+          agentSelect.dispatchEvent(new Event('change'));
+        }
+        
+        if (editAgentBtn) {
+          editAgentBtn.addEventListener('click', () => {
+            if (editAgentBtn.disabled) return;
+            
+            const selectedAgent = agentSelect.value;
+            const selectedText = agentSelect.options[agentSelect.selectedIndex].text;
+            
+            // Remover " (Personalizado)" do nome se existir
+            const agentName = selectedText.replace(' (Personalizado)', '');
+            
+            document.getElementById('editing-agent-key').value = selectedAgent;
+            document.getElementById('agent-name').value = agentName;
+            document.getElementById('delete-agent-btn').classList.remove('hidden');
+            
+            // Resetar formulário para estado inicial
+            document.getElementById('agent-type').value = 'pair';
+            document.getElementById('agent-type').dispatchEvent(new Event('change'));
+            
+            openModal('agent-modal');
+          });
+        }
+
+        // Botão Criar Manual (do modal de método)
+        const createManualBtn = document.getElementById('create-manual-btn');
+        if (createManualBtn) {
+          createManualBtn.addEventListener('click', () => {
+            closeModal('agent-method-modal');
+            document.getElementById('editing-agent-key').value = '';
+            document.getElementById('agent-name').value = '';
+            document.getElementById('delete-agent-btn').classList.add('hidden');
+            openModal('agent-modal');
+          });
+        }
+
+        // Botão Criar com IA (do modal de método)
+        const createAiBtn = document.getElementById('create-ai-btn');
+        if (createAiBtn) {
+          createAiBtn.addEventListener('click', () => {
+            closeModal('agent-method-modal');
+            openModal('ai-agent-modal');
+            resetAiModal();
+          });
+        }
+
+        // Botão Cancelar Método
+        const cancelMethodBtn = document.getElementById('cancel-method-btn');
+        if (cancelMethodBtn) {
+          cancelMethodBtn.addEventListener('click', () => closeModal('agent-method-modal'));
+        }
+
+        // Botão Cancelar Agent Modal
+        const cancelAgentBtn = document.getElementById('cancel-agent-btn');
+        if (cancelAgentBtn) {
+          cancelAgentBtn.addEventListener('click', () => closeModal('agent-modal'));
+        }
+
+        // Botão Salvar Agente
+        const saveAgentBtn = document.getElementById('save-agent-btn');
+        if (saveAgentBtn) {
+          saveAgentBtn.addEventListener('click', () => {
+            const agentName = document.getElementById('agent-name').value.trim();
+            if (!agentName) {
+              alert('Por favor, insira um nome para o agente.');
+              return;
+            }
+
+            const agentKey = agentName.toLowerCase().replace(/\s+/g, '-');
+            const agentSelect = document.getElementById('agent-select');
+            
+            // Verificar se está editando ou criando novo
+            const editingKey = document.getElementById('editing-agent-key').value;
+            
+            if (editingKey && editingKey !== agentKey) {
+              // Remover opção antiga se o nome mudou
+              const oldOption = agentSelect.querySelector(`option[value="${editingKey}"]`);
+              if (oldOption) oldOption.remove();
+            }
+
+            // Adicionar ou atualizar opção
+            let option = agentSelect.querySelector(`option[value="${agentKey}"]`);
+            if (!option) {
+              option = document.createElement('option');
+              option.value = agentKey;
+              agentSelect.appendChild(option);
+            }
+            option.textContent = `${agentName} (Personalizado)`;
+            agentSelect.value = agentKey;
+
+            // Atualizar contador
+            const customCount = agentSelect.querySelectorAll('option:not([value="agente-premissa-exemplo"])').length;
+            const counterEl = document.querySelector('.custom-agents-counter');
+            if (counterEl) {
+              counterEl.textContent = ` (${customCount} personalizados)`;
+            }
+
+            closeModal('agent-modal');
+            alert('Agente salvo com sucesso!');
+          });
+        }
+
+        // Botão Deletar Agente
+        const deleteAgentBtn = document.getElementById('delete-agent-btn');
+        if (deleteAgentBtn) {
+          deleteAgentBtn.addEventListener('click', () => {
+            if (confirm('Deseja realmente deletar este agente?')) {
+              const editingKey = document.getElementById('editing-agent-key').value;
+              const agentSelect = document.getElementById('agent-select');
+              const option = agentSelect.querySelector(`option[value="${editingKey}"]`);
+              if (option) {
+                option.remove();
+                agentSelect.value = 'agente-premissa-exemplo';
+                
+                // Atualizar contador
+                const customCount = agentSelect.querySelectorAll('option:not([value="agente-premissa-exemplo"])').length;
+                const counterEl = document.querySelector('.custom-agents-counter');
+                if (counterEl) {
+                  counterEl.textContent = ` (${customCount} personalizados)`;
+                }
+              }
+              closeModal('agent-modal');
+              alert('Agente deletado com sucesso!');
+            }
+          });
+        }
+
+        // Toggle tipo de agente (Par vs Clássico)
+        const agentTypeSelect = document.getElementById('agent-type');
+        const singlePromptContainer = document.getElementById('single-prompt-container');
+        const pairPromptContainer = document.getElementById('pair-prompt-container');
+        
+        if (agentTypeSelect) {
+          agentTypeSelect.addEventListener('change', () => {
+            if (agentTypeSelect.value === 'pair') {
+              singlePromptContainer.classList.add('hidden');
+              pairPromptContainer.classList.remove('hidden');
+            } else {
+              singlePromptContainer.classList.remove('hidden');
+              pairPromptContainer.classList.add('hidden');
+            }
+          });
+          // Inicializar estado correto
+          agentTypeSelect.dispatchEvent(new Event('change'));
+        }
+
+        // Checkbox TTS
+        const ttsCheckbox = document.getElementById('tts-enabled-checkbox');
+        const ttsConfigContainer = document.getElementById('tts-config-container');
+        if (ttsCheckbox) {
+          ttsCheckbox.addEventListener('change', () => {
+            if (ttsCheckbox.checked) {
+              ttsConfigContainer.classList.remove('hidden');
+            } else {
+              ttsConfigContainer.classList.add('hidden');
+            }
+          });
+        }
+
+        // Checkbox Mídia Visual
+        const visualMediaCheckbox = document.getElementById('visual-media-enabled-checkbox');
+        const visualMediaConfigContainer = document.getElementById('visual-media-config-container');
+        const imageConfigSection = document.getElementById('image-config-section');
+        const videoConfigSection = document.getElementById('video-config-section');
+        const visualMediaTypeSelect = document.getElementById('visual-media-type-select');
+        
+        if (visualMediaCheckbox) {
+          visualMediaCheckbox.addEventListener('change', () => {
+            if (visualMediaCheckbox.checked) {
+              visualMediaConfigContainer.classList.remove('hidden');
+              // Mostrar seção de imagem por padrão
+              imageConfigSection.classList.remove('hidden');
+            } else {
+              visualMediaConfigContainer.classList.add('hidden');
+            }
+          });
+        }
+
+        if (visualMediaTypeSelect) {
+          visualMediaTypeSelect.addEventListener('change', () => {
+            if (visualMediaTypeSelect.value === 'image') {
+              imageConfigSection.classList.remove('hidden');
+              videoConfigSection.classList.add('hidden');
+            } else {
+              imageConfigSection.classList.add('hidden');
+              videoConfigSection.classList.remove('hidden');
+            }
+          });
+        }
+
+        // Preview de imagens de referência
+        const imageReferenceInput = document.getElementById('image-reference-input');
+        const imageReferencePreview = document.getElementById('image-reference-preview');
+        
+        if (imageReferenceInput) {
+          imageReferenceInput.addEventListener('change', (e) => {
+            imageReferencePreview.innerHTML = '';
+            const files = Array.from(e.target.files);
+            files.forEach((file, index) => {
+              const reader = new FileReader();
+              reader.onload = (event) => {
+                const div = document.createElement('div');
+                div.className = 'relative';
+                div.innerHTML = `
+                  <img src="${event.target.result}" class="w-16 h-16 object-cover rounded border border-gray-600">
+                  <button class="remove-ref-img absolute -top-1 -right-1 bg-red-600 text-white rounded-full w-5 h-5 text-xs" data-index="${index}">×</button>
+                `;
+                imageReferencePreview.appendChild(div);
+                
+                div.querySelector('.remove-ref-img').addEventListener('click', () => {
+                  div.remove();
+                });
+              };
+              reader.readAsDataURL(file);
+            });
+          });
+        }
+
+        // ===== Modal AI Agent =====
+        function resetAiModal() {
+          document.getElementById('ai-input-step').classList.remove('hidden');
+          document.getElementById('ai-processing-step').classList.add('hidden');
+          document.getElementById('ai-preview-step').classList.add('hidden');
+          document.getElementById('ai-agent-name').value = '';
+          document.getElementById('ai-scripts-files').value = '';
+          document.getElementById('ai-files-list').classList.add('hidden');
+          document.getElementById('ai-files-container').innerHTML = '';
+        }
+
+        const cancelAiBtn = document.getElementById('cancel-ai-btn');
+        if (cancelAiBtn) {
+          cancelAiBtn.addEventListener('click', () => closeModal('ai-agent-modal'));
+        }
+
+        const aiScriptsFiles = document.getElementById('ai-scripts-files');
+        const aiFilesList = document.getElementById('ai-files-list');
+        const aiFilesContainer = document.getElementById('ai-files-container');
+        const startAiAnalysisBtn = document.getElementById('start-ai-analysis-btn');
+        
+        if (aiScriptsFiles) {
+          aiScriptsFiles.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+              aiFilesList.classList.remove('hidden');
+              aiFilesContainer.innerHTML = '';
+              let totalSize = 0;
+              
+              files.forEach(file => {
+                totalSize += file.size;
+                const div = document.createElement('div');
+                div.className = 'text-sm text-gray-300 flex items-center space-x-2';
+                div.innerHTML = `
+                  <i class="fas fa-file-alt text-indigo-400"></i>
+                  <span>${file.name}</span>
+                  <span class="text-gray-500">(${(file.size / 1024).toFixed(1)} KB)</span>
+                `;
+                aiFilesContainer.appendChild(div);
+              });
+              
+              document.getElementById('ai-files-count').textContent = `${files.length} arquivos`;
+              document.getElementById('ai-files-size').textContent = `${(totalSize / 1024).toFixed(1)} KB`;
+              startAiAnalysisBtn.disabled = false;
+            } else {
+              aiFilesList.classList.add('hidden');
+              startAiAnalysisBtn.disabled = true;
+            }
+          });
+        }
+
+        if (startAiAnalysisBtn) {
+          startAiAnalysisBtn.addEventListener('click', () => {
+            document.getElementById('ai-input-step').classList.add('hidden');
+            document.getElementById('ai-processing-step').classList.remove('hidden');
+            
+            // Simular processamento
+            setTimeout(() => {
+              document.getElementById('step1-status').innerHTML = '<i class="fas fa-check text-green-400"></i>';
+            }, 1000);
+            setTimeout(() => {
+              document.getElementById('step2-status').innerHTML = '<i class="fas fa-check text-green-400"></i>';
+            }, 2000);
+            setTimeout(() => {
+              document.getElementById('step3-status').innerHTML = '<i class="fas fa-check text-green-400"></i>';
+            }, 3000);
+            setTimeout(() => {
+              document.getElementById('step4-status').innerHTML = '<i class="fas fa-check text-green-400"></i>';
+              setTimeout(() => {
+                document.getElementById('ai-processing-step').classList.add('hidden');
+                document.getElementById('ai-preview-step').classList.remove('hidden');
+                
+                const agentName = document.getElementById('ai-agent-name').value || 'Novo Agente';
+                document.getElementById('ai-preview-content').innerHTML = `
+                  <div class="bg-gray-700 p-4 rounded-lg">
+                    <h4 class="text-white font-semibold mb-2">Nome: ${agentName}</h4>
+                    <p class="text-gray-400 text-sm">Agente criado com sucesso a partir dos roteiros fornecidos.</p>
+                  </div>
+                `;
+              }, 500);
+            }, 4000);
+          });
+        }
+
+        const saveAiAgentBtn = document.getElementById('save-ai-agent-btn');
+        if (saveAiAgentBtn) {
+          saveAiAgentBtn.addEventListener('click', () => {
+            const agentName = document.getElementById('ai-agent-name').value.trim() || 'Agente IA';
+            const agentKey = agentName.toLowerCase().replace(/\s+/g, '-');
+            const agentSelect = document.getElementById('agent-select');
+            
+            let option = agentSelect.querySelector(`option[value="${agentKey}"]`);
+            if (!option) {
+              option = document.createElement('option');
+              option.value = agentKey;
+              agentSelect.appendChild(option);
+            }
+            option.textContent = `${agentName} (Personalizado)`;
+            agentSelect.value = agentKey;
+            
+            closeModal('ai-agent-modal');
+            alert('Agente IA salvo com sucesso!');
+          });
+        }
+
+        const restartAiBtn = document.getElementById('restart-ai-btn');
+        if (restartAiBtn) {
+          restartAiBtn.addEventListener('click', () => resetAiModal());
+        }
+
+        const editAiAgentBtn = document.getElementById('edit-ai-agent-btn');
+        if (editAiAgentBtn) {
+          editAiAgentBtn.addEventListener('click', () => {
+            closeModal('ai-agent-modal');
+            openModal('agent-modal');
+          });
+        }
+
+        // Botão Adicionar Título
+        const addTitleBtn = document.getElementById('add-title-btn');
+        const newTitleInput = document.getElementById('new-title-input');
+        const titlesList = document.getElementById('titles-list');
+        if (addTitleBtn && newTitleInput) {
+          addTitleBtn.addEventListener('click', () => {
+            const title = newTitleInput.value.trim();
+            if (title) {
+              const titleItem = document.createElement('div');
+              titleItem.className = 'flex items-center space-x-2 p-2 bg-gray-700 rounded-md';
+              titleItem.innerHTML = `
+                <span class="flex-1 text-white text-sm">${title}</span>
+                <button class="remove-title-btn text-red-400 hover:text-red-300 text-sm">
+                  <i class="fas fa-times"></i>
+                </button>
+              `;
+              titlesList.appendChild(titleItem);
+              newTitleInput.value = '';
+              
+              // Adicionar evento de remover
+              titleItem.querySelector('.remove-title-btn').addEventListener('click', () => {
+                titleItem.remove();
+              });
+            }
+          });
+          
+          // Permitir adicionar com Enter
+          newTitleInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+              addTitleBtn.click();
+            }
+          });
+        }
+
+        // Upload de arquivo
+        const fileUpload = document.getElementById('file-upload');
+        if (fileUpload) {
+          fileUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = (event) => {
+                const content = event.target.result;
+                const lines = content.split('\n').filter(line => line.trim());
+                lines.forEach(line => {
+                  const titleItem = document.createElement('div');
+                  titleItem.className = 'flex items-center space-x-2 p-2 bg-gray-700 rounded-md';
+                  titleItem.innerHTML = `
+                    <span class="flex-1 text-white text-sm">${line.trim()}</span>
+                    <button class="remove-title-btn text-red-400 hover:text-red-300 text-sm">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  `;
+                  titlesList.appendChild(titleItem);
+                  
+                  titleItem.querySelector('.remove-title-btn').addEventListener('click', () => {
+                    titleItem.remove();
+                  });
+                });
+              };
+              reader.readAsText(file);
+            }
+          });
+        }
+
+        // Botão Gerar Roteiros
+        const generateBtn = document.getElementById('generate-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const placeholder = document.getElementById('placeholder');
+        const resultsArea = document.getElementById('results-area');
+        const scriptsCounter = document.getElementById('scripts-counter');
+        
+        if (generateBtn) {
+          generateBtn.addEventListener('click', () => {
+            generateBtn.classList.add('hidden');
+            stopBtn.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+            scriptsCounter.classList.remove('hidden');
+            scriptsCounter.textContent = '(0/0)';
+            
+            // Simular geração
+            resultsArea.innerHTML = `
+              <div class="space-y-4">
+                <div class="bg-gray-800 border border-gray-700 rounded-lg p-4">
+                  <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-lg font-semibold text-white">Roteiro de Exemplo</h3>
+                    <span class="text-green-400"><i class="fas fa-check-circle"></i></span>
+                  </div>
+                  <p class="text-gray-400 text-sm mb-2">Este é um exemplo de roteiro gerado. Configure suas API keys e agentes para gerar roteiros reais.</p>
+                  <div class="flex gap-2 mt-3">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded">
+                      <i class="fas fa-download mr-1"></i>Download
+                    </button>
+                    <button class="bg-gray-600 hover:bg-gray-500 text-white text-sm px-3 py-1 rounded">
+                      <i class="fas fa-copy mr-1"></i>Copiar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+            scriptsCounter.textContent = '(1/1)';
+          });
+        }
+
+        if (stopBtn) {
+          stopBtn.addEventListener('click', () => {
+            stopBtn.classList.add('hidden');
+            generateBtn.classList.remove('hidden');
+          });
+        }
+
+        // Botão Logout
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', () => {
+            if (confirm('Deseja realmente sair?')) {
+              // Limpar estado de login
+              sessionStorage.removeItem('boredfy_logged_in');
+              sessionStorage.removeItem('boredfy_user_email');
+              // Redirecionar para login
+              window.location.href = 'login.html';
+            }
+          });
+        }
+
+        // Fechar modais ao clicar fora
+        document.querySelectorAll('.fixed.inset-0').forEach(modal => {
+          modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+              modal.classList.add('hidden');
+            }
+          });
+        });
+
+        // Collapsible sections
+        document.querySelectorAll('.collapsible-header').forEach(header => {
+          header.style.cursor = 'pointer';
+          header.addEventListener('click', () => {
+            const icon = header.querySelector('.collapsible-icon');
+            const content = header.nextElementSibling;
+            if (content) {
+              content.classList.toggle('hidden');
+              if (icon) {
+                icon.classList.toggle('fa-chevron-down');
+                icon.classList.toggle('fa-chevron-right');
+              }
+            }
+          });
+        });
+
+        // Tooltips
+        document.querySelectorAll('.tooltip-trigger').forEach(trigger => {
+          trigger.addEventListener('mouseenter', (e) => {
+            const tooltip = e.target.nextElementSibling;
+            if (tooltip && tooltip.classList.contains('tooltip')) {
+              tooltip.classList.remove('opacity-0');
+              tooltip.classList.add('opacity-90');
+            }
+          });
+          trigger.addEventListener('mouseleave', (e) => {
+            const tooltip = e.target.nextElementSibling;
+            if (tooltip && tooltip.classList.contains('tooltip')) {
+              tooltip.classList.add('opacity-0');
+              tooltip.classList.remove('opacity-90');
+            }
+          });
+        });
+
+        // ===== FUNCIONALIDADES ADICIONAIS =====
+
+        // Toggle de senha nas API Keys
+        document.addEventListener('click', (e) => {
+          if (e.target.closest('.password-toggle-btn')) {
+            const btn = e.target.closest('.password-toggle-btn');
+            const input = btn.closest('.relative').querySelector('input');
+            const icon = btn.querySelector('i');
+            
+            if (input.type === 'password') {
+              input.type = 'text';
+              icon.classList.remove('fa-eye');
+              icon.classList.add('fa-eye-slash');
+            } else {
+              input.type = 'password';
+              icon.classList.remove('fa-eye-slash');
+              icon.classList.add('fa-eye');
+            }
+          }
+          
+          // Remover API Key
+          if (e.target.closest('.remove-api-key-btn')) {
+            const btn = e.target.closest('.remove-api-key-btn');
+            const row = btn.closest('.api-key-row');
+            if (confirm('Deseja remover esta chave API?')) {
+              row.remove();
+              updateKeyCounter();
+            }
+          }
+        });
+
+        // Adicionar nova API Key
+        const addGeminiKeyBtn = document.getElementById('add-gemini-key-btn');
+        if (addGeminiKeyBtn) {
+          addGeminiKeyBtn.addEventListener('click', () => {
+            const container = document.querySelector('#gemini-api-section .space-y-4:not(.collapsible-header)');
+            if (!container) return;
+            
+            const newRow = document.createElement('div');
+            newRow.className = 'flex items-center space-x-2 api-key-row';
+            newRow.innerHTML = `
+              <div class="flex-1 relative">
+                <input type="password" class="gemini-api-key-input w-full bg-gray-800 border border-gray-600 rounded-md p-2 text-white pr-16 border-gray-600" placeholder="Cole uma chave da API Gemini aqui">
+                <div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
+                  <button class="password-toggle-btn text-gray-400 hover:text-gray-300 p-1" title="Mostrar/Esconder API Key">
+                    <i class="fas fa-eye text-xs"></i>
+                  </button>
+                  <span class="validation-status text-xs text-gray-400" title="Não validada">
+                    <i class="fas fa-question-circle"></i>
+                  </span>
+                </div>
+              </div>
+              <button class="remove-api-key-btn bg-red-700 hover:bg-red-800 text-white font-bold py-1 px-3 rounded-md transition-colors" title="Remover chave">
+                <i class="fas fa-trash"></i>
+              </button>
+            `;
+            container.appendChild(newRow);
+            updateKeyCounter();
+            
+            // Focar no novo input
+            const newInput = newRow.querySelector('input');
+            newInput.focus();
+            
+            // Adicionar validação ao novo input
+            newInput.addEventListener('input', handleApiKeyValidation);
+          });
+        }
+
+        // Validação de API Keys
+        function handleApiKeyValidation(e) {
+          const input = e.target;
+          const apiKey = input.value.trim();
+          const statusSpan = input.closest('.relative').querySelector('.validation-status');
+          
+          // Limpar timeout anterior se existir
+          if (input.validationTimeout) {
+            clearTimeout(input.validationTimeout);
+          }
+          
+          if (!apiKey) {
+            // Vazio - estado neutro
+            statusSpan.className = 'validation-status text-xs text-gray-400';
+            statusSpan.title = 'Não validada';
+            statusSpan.innerHTML = '<i class="fas fa-question-circle"></i>';
+            input.classList.remove('border-yellow-400', 'border-green-400', 'border-red-400');
+            input.classList.add('border-gray-600');
+            return;
+          }
+          
+          // Validando - spinner
+          statusSpan.className = 'validation-status text-xs text-yellow-400';
+          statusSpan.title = 'Validando API Key...';
+          statusSpan.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+          input.classList.remove('border-gray-600', 'border-green-400', 'border-red-400');
+          input.classList.add('border-yellow-400');
+          
+          // Simular validação após 1.5 segundos
+          input.validationTimeout = setTimeout(() => {
+            // Validação simples: verifica se começa com AIzaSy e tem 39 caracteres
+            const isValid = apiKey.startsWith('AIzaSy') && apiKey.length === 39;
+            
+            if (isValid) {
+              // Válida - check verde
+              statusSpan.className = 'validation-status text-xs text-green-400';
+              statusSpan.title = 'API Key válida';
+              statusSpan.innerHTML = '<i class="fas fa-check-circle"></i>';
+              input.classList.remove('border-yellow-400', 'border-red-400', 'border-gray-600');
+              input.classList.add('border-green-400');
+            } else {
+              // Inválida - X vermelho
+              statusSpan.className = 'validation-status text-xs text-red-400';
+              statusSpan.title = 'API Key inválida';
+              statusSpan.innerHTML = '<i class="fas fa-times-circle"></i>';
+              input.classList.remove('border-yellow-400', 'border-green-400', 'border-gray-600');
+              input.classList.add('border-red-400');
+            }
+          }, 1500);
+        }
+
+        // Adicionar validação a todas as API keys existentes
+        document.querySelectorAll('.gemini-api-key-input').forEach(input => {
+          input.addEventListener('input', handleApiKeyValidation);
+          
+          // Validar keys existentes ao carregar
+          if (input.value.trim()) {
+            // Simular evento de input para validar
+            setTimeout(() => {
+              input.dispatchEvent(new Event('input'));
+            }, 500);
+          }
+        });
+
+        // Atualizar contador de chaves
+        function updateKeyCounter() {
+          const keyCount = document.querySelectorAll('.gemini-api-key-input').length;
+          const counter = document.querySelector('.key-counter');
+          if (counter) {
+            counter.textContent = ` (${keyCount}/${keyCount})`;
+          }
+        }
+
+        // Adicionar idioma primário
+        const addPrimaryLanguageBtn = document.getElementById('add-primary-language-btn');
+        const primaryLanguageInput = document.getElementById('primary-language-input');
+        const primaryLanguageTagContainer = document.getElementById('primary-language-tag-container');
+        
+        if (addPrimaryLanguageBtn && primaryLanguageInput) {
+          addPrimaryLanguageBtn.addEventListener('click', () => {
+            const lang = primaryLanguageInput.value.trim();
+            if (lang) {
+              addLanguageTag(lang, primaryLanguageTagContainer);
+              primaryLanguageInput.value = '';
+            }
+          });
+          
+          primaryLanguageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              addPrimaryLanguageBtn.click();
+            }
+          });
+        }
+
+        // Adicionar idioma adicional
+        const addLanguageBtn = document.getElementById('add-language-btn');
+        const newLanguageInput = document.getElementById('new-language-input');
+        const additionalLanguagesTags = document.getElementById('additional-languages-tags');
+        
+        if (addLanguageBtn && newLanguageInput) {
+          addLanguageBtn.addEventListener('click', () => {
+            const lang = newLanguageInput.value.trim();
+            if (lang) {
+              addLanguageTag(lang, additionalLanguagesTags);
+              newLanguageInput.value = '';
+            }
+          });
+          
+          newLanguageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              addLanguageBtn.click();
+            }
+          });
+        }
+
+        // Função para adicionar tag de idioma
+        function addLanguageTag(lang, container) {
+          const tag = document.createElement('span');
+          tag.className = 'inline-flex items-center space-x-1 bg-indigo-600 text-white px-3 py-1 rounded-full text-sm';
+          tag.innerHTML = `
+            <span>${lang}</span>
+            <button class="remove-lang-tag hover:text-red-300 ml-1">
+              <i class="fas fa-times text-xs"></i>
+            </button>
+          `;
+          container.appendChild(tag);
+          
+          tag.querySelector('.remove-lang-tag').addEventListener('click', () => {
+            tag.remove();
+          });
+        }
+
+        // Inicializar estado dos contadores
+        updateKeyCounter();
+      });
+    </script>
+
+    <script src="script.js"></script>
+</body></html>

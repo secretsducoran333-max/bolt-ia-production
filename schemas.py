@@ -1,143 +1,166 @@
-from pydantic import BaseModel
-from typing import List, Optional, Dict, Any
+# schemas.py - Schemas Pydantic para validação de dados
 
-# =================================================================
-# == Modelos de API (Pydantic) - Para validação de requisições   ==
-# =================================================================
+from pydantic import BaseModel, EmailStr, Field
+from typing import Optional, List, Dict
+from datetime import datetime
 
-# --- Modelos para Adaptação Cultural e TTS ---
+# ===== User Schemas =====
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
 
-class CulturalConfig(BaseModel):
-    """Configuração de adaptação cultural para um idioma"""
-    adaptacao_prompt: Optional[str] = None
-    sensibilidade: Optional[str] = None
-    formato: Optional[str] = None
-    voice_id: str
-    speaking_rate: float = 0.95
-    pitch: int = 0
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
 
-# --- Modelos para a Geração de Roteiros ---
-
-class AgenteConfig(BaseModel):
-    premise_prompt: str
-    idioma: str
-    persona_and_global_rules_prompt: str
-    block_structure_prompt: str
-    
-    # Novos campos para adaptação cultural e TTS
-    cultural_adaptation_prompt: Optional[str] = None
-    idiomas_alvo: List[str] = ["fr-FR"]
-    cultural_configs: Dict[str, Any] = {}
-    default_voices: Dict[str, Any] = {}
-
-class GenerationRequest(BaseModel):
-    modelo_ia: str
-    agente_config: AgenteConfig
-    titulo: str
-    num_variacoes: int = 1  # NOVO: quantas variações gerar (default 1 para retrocompatibilidade)
+class User(BaseModel):
+    id: int
+    email: str
+    created_at: datetime
     
     class Config:
-        json_schema_extra = {
-            "example": {
-                "modelo_ia": "gemini-1.5-pro",
-                "titulo": "A Força da Persistência",
-                "num_variacoes": 3,
-                "agente_config": {
-                    "premise_prompt": "Roteiro motivacional...",
-                    "idioma": "pt-BR",
-                    "persona_and_global_rules_prompt": "Tom inspirador...",
-                    "block_structure_prompt": "3 blocos...",
-                    "idiomas_alvo": ["pt-BR", "fr-FR", "es-ES"]
-                }
-            }
-        }
+        from_attributes = True
 
-# --- Modelos para o Sistema de Jobs ---
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+# ===== API Key Schemas =====
+class ApiKeyValidate(BaseModel):
+    api_key: str
+
+class ApiKeyAdd(BaseModel):
+    api_key: str
+    service: str = "Gemini"
+
+class ApiKeyResponse(BaseModel):
+    id: int
+    service: str
+    key_masked: str
+    is_valid: bool
+    last_validated: Optional[datetime]
+    created_at: datetime
+
+# ===== Agent Schemas =====
+class AgentCreate(BaseModel):
+    name: str
+    agent_type: str = "premissa"
+    idioma_principal: str
+    premise_prompt: str
+    script_prompt: str
+    block_structure: str
+    cultural_adaptation_prompt: Optional[str] = None
+    idiomas_adicionais: List[str] = []
+    tts_enabled: bool = False
+    tts_voices: Dict[str, str] = {}
+    visual_media_enabled: bool = False
+    visual_media_type: Optional[str] = None
+    visual_media_config: Dict = {}
+
+class AgentUpdate(BaseModel):
+    name: Optional[str] = None
+    premise_prompt: Optional[str] = None
+    script_prompt: Optional[str] = None
+    block_structure: Optional[str] = None
+    cultural_adaptation_prompt: Optional[str] = None
+    idiomas_adicionais: Optional[List[str]] = None
+    tts_enabled: Optional[bool] = None
+    tts_voices: Optional[Dict[str, str]] = None
+    visual_media_enabled: Optional[bool] = None
+    visual_media_type: Optional[str] = None
+    visual_media_config: Optional[Dict] = None
+
+class AgentResponse(BaseModel):
+    id: int
+    name: str
+    agent_type: str
+    idioma_principal: str
+    premise_prompt: str
+    script_prompt: str
+    block_structure: str
+    cultural_adaptation_prompt: Optional[str]
+    idiomas_adicionais: List[str]
+    tts_enabled: bool
+    tts_voices: Dict[str, str]
+    visual_media_enabled: bool
+    visual_media_type: Optional[str]
+    visual_media_config: Dict
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+# ===== Job Schemas =====
+class JobCreate(BaseModel):
+    agent_id: int
+    titulos: List[str]  # Lista de títulos para gerar
 
 class JobResponse(BaseModel):
     id: str
     status: str
-    titulo: Optional[str] = None  # NOVO: título do job para interface
-    log: List[str] = []
-    resultado: Optional[str] = None
-    
-    # Novos campos para multi-idioma e TTS
-    roteiro_master: Optional[str] = None
-    roteiros_adaptados: Optional[Dict[str, str]] = None
-    audios_gerados: Optional[Dict[str, str]] = None
-    chars_processados_tts: int = 0
-    duracao_total_segundos: Optional[int] = None
-
-class JobResponseVariacoes(BaseModel):
-    """Resposta de job com suporte a múltiplas variações"""
-    id: str
-    status: str
-    titulo: Optional[str] = None  # NOVO: título do job para interface
-    num_variacoes: int
-    roteiros_por_variacao: Optional[Dict[str, Dict[str, str]]] = None  # {"var_1": {"pt-BR": "...", "fr-FR": "..."}}
-    audios_por_variacao: Optional[Dict[str, Dict[str, str]]] = None    # {"var_1": {"pt-BR": "/static/...", "fr-FR": "..."}}
-    chars_processados_tts: int = 0
+    progress: int
+    titulo: Optional[str]
+    created_at: datetime
     
     class Config:
-        json_schema_extra = {
-            "example": {
-                "id": "abc123",
-                "status": "completed",
-                "num_variacoes": 3,
-                "roteiros_por_variacao": {
-                    "variacao_1": {"pt-BR": "Roteiro 1...", "fr-FR": "Script 1..."},
-                    "variacao_2": {"pt-BR": "Roteiro 2...", "fr-FR": "Script 2..."},
-                    "variacao_3": {"pt-BR": "Roteiro 3...", "fr-FR": "Script 3..."}
-                },
-                "audios_por_variacao": {
-                    "variacao_1": {"pt-BR": "/static/audio/abc_var1_pt.mp3", "fr-FR": "/static/audio/abc_var1_fr.mp3"}
-                }
-            }
-        }
+        from_attributes = True
 
-class JobCreationResponse(BaseModel):
-    job_id: str
-
-# --- Modelos para o Sistema de Usuários e Autenticação ---
-
-class UserCreate(BaseModel):
-    email: str
-    password: str
-
-class UserInDB(BaseModel):
-    username: str
-    hashed_password: str
-
-# --- Schemas para Agentes ---
-class VoiceConfig(BaseModel):
-    """Configuração completa de uma voz para TTS"""
-    voice_id: str
-    speaking_rate: float = 0.95
-    pitch: int = 0
-
-class AgentBase(BaseModel):
-    name: str
-    idioma: str
-    premise_prompt: str
-    persona_and_global_rules_prompt: str
-    block_structure_prompt: str
+class JobDetailResponse(BaseModel):
+    id: str
+    status: str
+    progress: int
+    titulo: Optional[str]
+    log: List[str]
+    roteiro_master: Optional[str]
+    roteiros_adaptados: Optional[Dict[str, str]]
+    audios_gerados: Optional[Dict[str, str]]
+    imagens_geradas: Optional[List[str]]
+    video_gerado: Optional[str]
+    created_at: datetime
+    updated_at: datetime
     
-    # Novos campos para adaptação cultural e TTS
-    cultural_adaptation_prompt: Optional[str] = None
-    idiomas_alvo: List[str] = ["fr-FR"]
-    cultural_configs: Dict[str, Any] = {}  # Aceita qualquer estrutura
-    default_voices: Dict[str, Any] = {}  # Aceita string (voice_id) ou dict completo (VoiceConfig)
+    class Config:
+        from_attributes = True
 
-class AgentCreate(AgentBase):
-    pass
+# ===== Stats Schemas =====
+class UserStatsResponse(BaseModel):
+    scripts_today: int
+    scripts_week: int
+    scripts_month: int
+    scripts_total: int
+    tts_today: int
+    tts_week: int
+    tts_month: int
+    tts_total: int
+    total_audio_duration: int
+    days_active: int
+    streak_count: int
+    level: int
+    xp: int
+    
+    class Config:
+        from_attributes = True
 
-class AgentOut(AgentBase):
+# ===== File Schemas =====
+class GeneratedFileResponse(BaseModel):
     id: int
+    filename: str
+    file_type: str
+    file_size: Optional[int]
+    download_url: str
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
 
-# --- Schemas para API Keys ---
-class ApiKeyIn(BaseModel):
-    key: str
+# ===== AI Agent Creation Schemas =====
+class AIAgentCreateRequest(BaseModel):
+    agent_name: str
+    # Os arquivos serão enviados via FormData/multipart
 
-class ApiKeyOut(BaseModel):
-    id: int
-    key: str
+class AIAgentPreview(BaseModel):
+    agent_name: str
+    premise_template: str
+    script_template: str
+    block_structure: str
+    cultural_adaptation_template: str
