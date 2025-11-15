@@ -1117,6 +1117,16 @@ def serve_index():
     """Serve a página principal"""
     return FileResponse("index.html")
 
+@app.get("/login_script.js")
+def serve_login_script():
+    """Serve o script de login"""
+    return FileResponse("login_script.js", media_type="application/javascript")
+
+@app.get("/script.js")
+def serve_main_script():
+    """Serve o script principal"""
+    return FileResponse("script.js", media_type="application/javascript")
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
